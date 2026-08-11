@@ -1,4 +1,5 @@
 import express from "express";
+import { prisma } from "./config/prisma.js";
 
 const app = express();
 
@@ -8,6 +9,28 @@ app.get("/", (req, res) => {
     res.json({
         message: "OpsFlow API is running"
     });
+});
+
+app.get("/api/health", async (req, res) => {
+    try {
+        const userCount = await prisma.user.count();
+
+        res.status(200).json({
+            success: true,
+            message: "OpsFlow API and database are healthy",
+            database: {
+                connected: true,
+                userCount
+            }
+        });
+    } catch (error) {
+        console.error("Database health check failed:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Database connection failed"
+        });
+    }
 });
 
 export default app;
