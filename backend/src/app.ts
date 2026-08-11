@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import customerRoutes from "./routes/customer.routes.js";
 import productRoutes from "./routes/product.routes.js";
+import challanRoutes from "./routes/challan.routes.js";
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/challans", challanRoutes);
 
 
 app.get("/", (req, res) => {
