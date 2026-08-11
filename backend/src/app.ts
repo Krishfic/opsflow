@@ -2,12 +2,14 @@ import express from "express";
 import { prisma } from "./config/prisma.js";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
+import customerRoutes from "./routes/customer.routes.js";
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
+app.use("/api/customers", customerRoutes);
 
 
 app.get("/", (req, res) => {
