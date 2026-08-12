@@ -4,8 +4,12 @@ import {
     createCustomer,
     getCustomerById,
     getCustomers,
-    updateCustomer
+    updateCustomer,
+    getCustomerFollowUps
 } from "../services/customer.service.js";
+import {
+    CustomerStatus
+} from "../generated/prisma/client.js";
 
 export const createCustomerController = async (
     req: Request,
@@ -48,10 +52,32 @@ export const getCustomersController = async (
                 ? req.query.search.trim()
                 : undefined;
 
+        const rawStatus =
+    typeof req.query.status === "string"
+        ? req.query.status
+        : undefined;
+
+let status: CustomerStatus | undefined;
+
+if (rawStatus) {
+    if (
+        !Object.values(CustomerStatus).includes(
+            rawStatus as CustomerStatus
+        )
+    ) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid customer status"
+        });
+    }
+
+    status = rawStatus as CustomerStatus;
+}
+
         const result = await getCustomers({
             page,
             limit,
-            search
+            search,status
         });
 
         return res.status(200).json({
@@ -175,3 +201,42 @@ export const addFollowUpController = async (
         });
     }
 };
+
+export const getCustomerFollowUpsController =
+    async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
+            const customerId =
+                Number(req.params.id);
+
+            if (
+                !Number.isInteger(customerId)
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "Invalid customer ID"
+                });
+            }
+
+            const followUps =
+                await getCustomerFollowUps(
+                    customerId
+                );
+
+            return res.status(200).json({
+                success: true,
+                followUps
+            });
+        } catch (error) {
+            console.error(error);
+
+            return res.status(500).json({
+                success: false,
+                message:
+                    "Failed to fetch follow-ups"
+            });
+        }
+    };

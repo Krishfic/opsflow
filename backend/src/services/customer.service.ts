@@ -29,16 +29,19 @@ interface GetCustomersOptions {
     page: number;
     limit: number;
     search?: string;
+    status?:CustomerStatus
 }
 
 export const getCustomers = async ({
     page,
     limit,
-    search
+    search,
+    status
 }: GetCustomersOptions) => {
     const skip = (page - 1) * limit;
 
-    const where = search
+    const where = {
+    ...(search
         ? {
               OR: [
                   {
@@ -61,7 +64,14 @@ export const getCustomers = async ({
                   }
               ]
           }
-        : {};
+        : {}),
+
+    ...(status
+        ? {
+              status
+          }
+        : {})
+};
 
     const [customers, total] = await prisma.$transaction([
         prisma.customer.findMany({
@@ -139,6 +149,28 @@ export const addFollowUp = async (
             createdById,
             note: data.note,
             followUpDate: data.followUpDate
+        },
+        include: {
+            createdBy: {
+                select: {
+                    id: true,
+                    name: true,
+                    role: true
+                }
+            }
+        }
+    });
+};
+
+export const getCustomerFollowUps = async (
+    customerId: number
+) => {
+    return prisma.customerFollowUp.findMany({
+        where: {
+            customerId
+        },
+        orderBy: {
+            createdAt: "desc"
         },
         include: {
             createdBy: {

@@ -3,6 +3,7 @@ import {
     addFollowUpController,
     createCustomerController,
     getCustomerController,
+    getCustomerFollowUpsController,
     getCustomersController,
     updateCustomerController
 } from "../controllers/customer.controller.js";
@@ -74,6 +75,16 @@ router.post(
     ),
     validate(createFollowUpSchema),
     addFollowUpController
+);
+
+router.get(
+    "/:id/follow-ups",
+    authenticate,
+    authorize(
+        Role.ADMIN,
+        Role.SALES
+    ),
+    getCustomerFollowUpsController
 );
 
 export default router;
