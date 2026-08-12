@@ -2,33 +2,34 @@ import express from "express";
 import cors from "cors";
 import { prisma } from "./config/prisma.js";
 import cookieParser from "cookie-parser";
+
 import authRoutes from "./routes/auth.routes.js";
 import customerRoutes from "./routes/customer.routes.js";
 import productRoutes from "./routes/product.routes.js";
 import challanRoutes from "./routes/challan.routes.js";
-import dashboardRoutes
-    from "./routes/dashboard.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 
 const app = express();
 
+const frontendUrl =
+    process.env.FRONTEND_URL ||
+    "http://localhost:5173";
+
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: frontendUrl,
         credentials: true
     })
 );
 
 app.use(express.json());
 app.use(cookieParser());
+
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/challans", challanRoutes);
-app.use(
-    "/api/dashboard",
-    dashboardRoutes
-);
-
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
     res.json({
@@ -49,7 +50,10 @@ app.get("/api/health", async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("Database health check failed:", error);
+        console.error(
+            "Database health check failed:",
+            error
+        );
 
         res.status(500).json({
             success: false,
