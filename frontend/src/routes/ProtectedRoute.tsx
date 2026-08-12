@@ -1,5 +1,9 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+
+import {
+    useAppSelector
+} from "../app/hooks";
+
 import LoadingScreen from "../components/common/LoadingScreen";
 
 interface ProtectedRouteProps {
@@ -9,10 +13,13 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({
     children
 }: ProtectedRouteProps) => {
+
     const {
         user,
         loading
-    } = useAuth();
+    } = useAppSelector(
+        (state) => state.auth
+    );
 
     if (loading) {
         return <LoadingScreen />;

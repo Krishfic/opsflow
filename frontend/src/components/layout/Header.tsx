@@ -1,10 +1,21 @@
-import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+
+import { logoutUser } from "../../api/auth.api";
+
+import {
+    clearCredentials
+} from "../../features/auth/authSlice";
 
 const Header = () => {
-    const {
-        user,
-        logout
-    } = useAuth();
+    const navigate = useNavigate();
+
+    const user = useAppSelector(
+        (state) => state.auth.user
+    );
+
+    const dispatch = useAppDispatch();
 
     if (!user) {
         return null;
@@ -12,7 +23,13 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await logout();
+            await logoutUser();
+
+            dispatch(
+                clearCredentials()
+            );
+
+            navigate("/login");
         } catch (error) {
             console.error(
                 "Logout failed:",

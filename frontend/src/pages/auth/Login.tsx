@@ -1,11 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAppDispatch } from "../../app/hooks";
+import { setCredentials } from "../../features/auth/authSlice";
+
+import { loginUser } from "../../api/auth.api";
 
 const Login = () => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const dispatch = useAppDispatch();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -22,10 +25,14 @@ const Login = () => {
             setError("");
             setLoading(true);
 
-            await login({
-                email,
-                password
-            });
+            const response = await loginUser({
+    email,
+    password
+});
+
+dispatch(
+    setCredentials(response.user)
+);
 
             navigate("/dashboard");
         } catch (error) {

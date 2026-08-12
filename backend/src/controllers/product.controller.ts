@@ -124,12 +124,22 @@ export const updateProductController = async (
             });
         }
 
-        const product = await updateProduct(id, req.body);
+        const product = await updateProduct(
+    id,
+    req.body
+);
 
-        return res.status(200).json({
-            success: true,
-            product
-        });
+if (!product) {
+    return res.status(404).json({
+        success: false,
+        message: "Product not found"
+    });
+}
+
+return res.status(200).json({
+    success: true,
+    product
+});
     } catch (error) {
         console.error(error);
 

@@ -1,6 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import type { UserRole } from "../../types/auth";
+
+import { useAppSelector } from "../../app/hooks";
+
+import type {
+    UserRole
+} from "../../features/auth/authSlice";
 
 interface NavigationItem {
     label: string;
@@ -57,7 +61,9 @@ const navigationItems: NavigationItem[] = [
 ];
 
 const Sidebar = () => {
-    const { user } = useAuth();
+    const user = useAppSelector(
+        (state) => state.auth.user
+    );
 
     if (!user) {
         return null;
