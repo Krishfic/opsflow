@@ -82,7 +82,8 @@ router.get(
     authenticate,
     authorize(
         Role.ADMIN,
-        Role.SALES
+        Role.SALES,
+        Role.ACCOUNTS
     ),
     getCustomerFollowUpsController
 );
